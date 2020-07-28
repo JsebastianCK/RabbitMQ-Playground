@@ -13,7 +13,7 @@ amqp.connect(config.rabbitMqConn, function(error0, connection) {
         let exchange = process.argv[3] || 'default';
         let msg = process.argv[2] || 'default';
     
-        channel.assertExchange(exchange, {
+        channel.assertExchange(exchange, 'fanout', {
             durable: false
         });
     

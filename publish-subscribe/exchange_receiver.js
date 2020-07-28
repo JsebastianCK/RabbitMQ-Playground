@@ -1,7 +1,26 @@
 const amqp = require('amqplib/callback_api');
 const config = require('./config');
 
-const handleMessageReceived = (channel) = (err, q) => {
+amqp.connect(config.rabbitMqConn, function(error0, connection) {
+    if (error0) {
+        throw error0;
+    }
+    connection.createChannel(function(error1, channel) {
+        if (error1) {
+            throw error1;
+        }
+
+        let exchange = process.argv[2] || 'default';
+
+        channel.assertExchange(exchange, 'fanout', {
+            durable: false
+        });
+
+        channel.assertQueue('', {durable: true}, handleMessageReceived(channel, exchange));
+    });
+});
+
+const handleMessageReceived = (channel, exchange) => (err, q) => {
     if (err) {
         throw err;
     }
@@ -16,22 +35,3 @@ const handleMessageReceived = (channel) = (err, q) => {
         noAck: true
     });
 }
-
-amqp.connect(config.rabbitMqConn, function(error0, connection) {
-    if (error0) {
-        throw error0;
-    }
-    connection.createChannel(function(error1, channel) {
-        if (error1) {
-            throw error1;
-        }
-
-        let exchange = process.argv[2] || 'default';
-
-        channel.assertExchange(exchange, {
-            durable: false
-        });
-
-        channel.assertQueue('', {durable: true}, handleMessageReceived(channel));
-    });
-});
