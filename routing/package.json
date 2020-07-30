@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "producer": "node exchange_producer.js",
-    "receiver": "node exchange_receiver.js"
+    "emit": "node emit_direct.js",
+    "receive": "node receive_direct.js"
   },
   "keywords": [],
   "author": "",
